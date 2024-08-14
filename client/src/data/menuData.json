@@ -1,0 +1,74 @@
+[{
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/itsupportkancab",
+            "roles": ["itsupportkancab"]
+        }]
+    },
+    {
+        "header": "DOKUMEN",
+        "items": [{
+                "text": "WO",
+                "icon": "bx bx-folder",
+                "available": true,
+                "link": "/itsupportkancab/wo",
+                "roles": ["itsupportkancab"]
+            },
+            {
+                "text": "LO AYAM",
+                "icon": "bx bx-file",
+                "available": true,
+                "link": "/itsupportkancab/lo",
+                "roles": ["itsupportkancab"]
+            },
+            {
+                "text": "LO TELUR",
+                "icon": "bx bx-file",
+                "available": true,
+                "link": "/itsupportkancab/lotelur",
+                "roles": ["itsupportkancab"]
+            }
+        ]
+    },
+    {
+        "header": "MONITORING",
+        "items": [{
+            "text": "REALISASI",
+            "icon": "bx bx-folder",
+            "available": true,
+            "link": "/itsupportkancab/rekap",
+            "roles": ["itsupportkancab"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/pic",
+            "roles": ["pic"]
+        }]
+    }, {
+        "header": "DOKUMEN",
+        "items": [{
+            "text": "LO",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/pic/lo",
+            "roles": ["pic"]
+        }]
+    }, {
+        "header": "MONITORING",
+        "items": [{
+            "text": "REALISASI",
+            "icon": "bx bx-folder",
+            "available": true,
+            "link": "/pic/rekap",
+            "roles": ["pic"]
+        }]
+    }
+]

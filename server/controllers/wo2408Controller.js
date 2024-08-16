@@ -11,6 +11,9 @@ const addWo = async (req, res) => {
         id_admin_kancab,
         id_alokasi,
         nomor_wo,
+        nama_supplier_wo,
+        alamat_supplier_wo,
+        nomor_supplier_wo,
         tanggal_wo,
         status_wo,
         qr_wo
@@ -21,6 +24,9 @@ const addWo = async (req, res) => {
             id_admin_kancab,
             id_alokasi,
             nomor_wo,
+            nama_supplier_wo,
+            alamat_supplier_wo,
+            nomor_supplier_wo,
             tanggal_wo,
             status_wo,
             qr_wo
@@ -37,12 +43,18 @@ const updateWO = async (req, res) => {
     const {
         nomor_wo,
         tanggal_wo,
+        nama_supplier_wo,
+        alamat_supplier_wo,
+        nomor_supplier_wo,
         qr_wo
     } = req.body;
     try {
         const [updated] = await WO2408.update({
             nomor_wo,
             tanggal_wo,
+            nama_supplier_wo,
+            alamat_supplier_wo,
+            nomor_supplier_wo,
             qr_wo
         }, {
             where: { id_wo: id }
@@ -115,6 +127,9 @@ const getDetailsWO = async (req, res) => {
             wo.id_admin_kancab,
             wo.id_alokasi,
             wo.nomor_wo,
+            wo.nama_supplier_wo,
+            wo.alamat_supplier_wo,
+            wo.nomor_supplier_wo,
             wo.tanggal_wo,
             wo.status_wo,
             wo.qr_wo,

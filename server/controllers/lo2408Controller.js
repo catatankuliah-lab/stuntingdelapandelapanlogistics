@@ -14,6 +14,9 @@ const addLo = async (req, res) => {
         nomor_mobil,
         nama_driver,
         nomor_driver,
+        nama_langsir,
+        alamat_langsir,
+        nama_pic,
         qr_lo,
         jenis_muatan,
     } = req.body;
@@ -27,6 +30,9 @@ const addLo = async (req, res) => {
             nomor_mobil,
             nama_driver,
             nomor_driver,
+            nama_langsir,
+            alamat_langsir,
+            nama_pic,
             qr_lo,
             jenis_muatan
         });
@@ -48,6 +54,9 @@ const getDetailLO = async (req, res) => {
                     'nama_driver', lo_2408.nama_driver,
                     'nomor_driver', lo_2408.nomor_driver,
                     'nomor_lo', lo_2408.nomor_lo,
+                    'nama_langsir', lo_2408.nama_langsir,
+                    'alamat_langsir', lo_2408.alamat_langsir,
+                    'nama_pic', lo_2408.nama_pic,
                     'tanggal_lo', lo_2408.tanggal_lo,
                     'wo_details', JSON_OBJECT(
                         'id_wo', wo_2408.id_wo,
@@ -68,6 +77,7 @@ const getDetailLO = async (req, res) => {
                             JOIN kecamatan ON desa_kelurahan_2408.id_kecamatan = kecamatan.id_kecamatan
                             JOIN kabupaten_kota ON kecamatan.id_kabupaten_kota = kabupaten_kota.id_kabupaten_kota
                             WHERE itemwo_2408.id_wo = wo_2408.id_wo
+                            AND itemwo_2408.jumlah_paket_desa_kelurahan != 0
                         )
                     )
                 ) AS result

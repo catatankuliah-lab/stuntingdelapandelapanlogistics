@@ -20,6 +20,9 @@ const DetailPage = ({ handleBackClick, id }) => {
     const [formData, setFormData] = useState({
         tanggal_wo: '',
         nomor_wo: '',
+        nama_supplier_wo: '',
+        alamat_supplier_wo: '',
+        nomor_supplier_wo: '',
         id_wo: '',
     });
 
@@ -35,6 +38,9 @@ const DetailPage = ({ handleBackClick, id }) => {
             setFormData({
                 id_wo: data.id_wo,
                 nomor_wo: data.nomor_wo,
+                nama_supplier_wo: data.nama_supplier_wo,
+                alamat_supplier_wo: data.alamat_supplier_wo,
+                nomor_supplier_wo: data.nomor_supplier_wo,
                 tanggal_wo: data.tanggal_wo,
             });
         } catch (error) {
@@ -265,6 +271,18 @@ const DetailPage = ({ handleBackClick, id }) => {
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="id_alokasi" className="form-label">Alokasi</label>
                             <input className="form-control text-uppercase" type="text" id="id_alokasi" name='id_alokasi' placeholder="Nomor Working Order" value={WO.alokasi.bulan_alokasi + ' ' + WO.alokasi.tahun_alokasi} readOnly required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nama_supplier_wo" className="form-label">Supplier/Gudang</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_supplier_wo" name='nama_supplier_wo' placeholder="Supplier/Gudang" value={formData.nama_supplier_wo} onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="alamat_supplier_wo" className="form-label">Alamat Supplier/Gudang</label>
+                            <input className="form-control text-uppercase" type="text" id="alamat_supplier_wo" name='alamat_supplier_wo' placeholder="Alamat Supplier Gudang" value={formData.alamat_supplier_wo} onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nomor_supplier_wo" className="form-label">Nomor Telpon Supplier/Gudang</label>
+                            <input className="form-control text-uppercase" type="number" id="nomor_supplier_wo" name='nomor_supplier_wo' placeholder="Nomor Telpon Supplier/Gudang" value={formData.nomor_supplier_wo} onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="status_wo" className="form-label">Status Working Order</label>

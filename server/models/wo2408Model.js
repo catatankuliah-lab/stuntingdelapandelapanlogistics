@@ -30,6 +30,18 @@ const WO2408 = sequelize.define('WO2408', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    nama_supplier_wo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    alamat_supplier_wo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    nomor_supplier_wo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     tanggal_wo: {
         type: DataTypes.DATEONLY,
         allowNull: false,
@@ -56,9 +68,13 @@ const WO2408 = sequelize.define('WO2408', {
     hooks: {
         beforeCreate: (WO2408) => {
             WO2408.nomor_wo = WO2408.nomor_wo.toUpperCase();
+            WO2408.nama_supplier_wo = WO2408.nama_supplier_wo.toUpperCase();
+            WO2408.alamat_supplier_wo = WO2408.alamat_supplier_wo.toUpperCase();
         },
         beforeUpdate: (WO2408) => {
             WO2408.nomor_wo = WO2408.nomor_wo.toUpperCase();
+            WO2408.nama_supplier_wo = WO2408.nama_supplier_wo.toUpperCase();
+            WO2408.alamat_supplier_wo = WO2408.alamat_supplier_wo.toUpperCase();
         },
     },
     tableName: 'wo_2408',

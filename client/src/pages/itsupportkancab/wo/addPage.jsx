@@ -26,22 +26,6 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
         fetchAlokasiOptions();
     }, []);
 
-    useEffect(() => {
-        const fetchGudangOptions = async () => {
-            try {
-                const response = await axios.get('http://localhost:5050/api/gudang/all');
-                const options = response.data.map(gudang => ({
-                    value: gudang.id_gudang,
-                    label: `${gudang.nama_gudang}`
-                }));
-                setGudangOption(options);
-            } catch (error) {
-                console.error('Error fetching Gudang options:', error);
-            }
-        };
-        fetchGudangOptions();
-    }, []);
-
     const handleAlokasiChange = (selectedOption) => {
         setSelectedAlokasi(selectedOption);
     };
@@ -70,8 +54,7 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
             id_admin_kancab: 1,
             qr_wo: formData.nomor_wo.replace(/[ ,./]/g, ''),
             status_wo: "BELUM TERSALURKAN",
-            id_alokasi: selectedAlokasi ? selectedAlokasi.value : null,
-            id_gudang: selectedGudang ? selectedGudang.value : null
+            id_alokasi: selectedAlokasi ? selectedAlokasi.value : null
         };
         console.log(dataToSubmit);
         try {
@@ -121,17 +104,17 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
                                 placeholder="Pilih Alokasi"
                             />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3 d-none">
-                            <label htmlFor="id_gudang" className="form-label">Gudang</label>
-                            <Select
-                                id="id_gudang"
-                                name="id_gudang"
-                                value={selectedGudang}
-                                onChange={handleGudangChange}
-                                options={gudangOption}
-                                isClearable
-                                placeholder="Pilih Gudang"
-                            />
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nama_supplier_wo" className="form-label">Supplier/Gudang</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_supplier_wo" name='nama_supplier_wo' placeholder="Supplier/Gudang" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="alamat_supplier_wo" className="form-label">Alamat Supplier/Gudang</label>
+                            <input className="form-control text-uppercase" type="text" id="alamat_supplier_wo" name='alamat_supplier_wo' placeholder="Alamat Supplier Gudang" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nomor_supplier_wo" className="form-label">Nomor Telpon Supplier/Gudang</label>
+                            <input className="form-control text-uppercase" type="number" id="nomor_supplier_wo" name='nomor_supplier_wo' placeholder="Nomor Telpon Supplier/Gudang" onChange={handleChange} required />
                         </div>
                         <div className="col-md-12 col-sm-12 mt-2">
                             <button type="submit" className="btn btn-primary w-100">Simpan</button>

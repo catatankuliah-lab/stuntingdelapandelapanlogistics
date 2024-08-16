@@ -3,6 +3,8 @@ import AddPage from './addPage';
 import DetailPage from './detailPage';
 import axios from 'axios';
 import Select from 'react-select';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const IndexLOPage = () => {
     const [currentView, setCurrentView] = useState('index');
@@ -77,6 +79,45 @@ const IndexLOPage = () => {
         }
     };
 
+    const handleCreatePDFClick = () => {
+        const doc = new jsPDF();
+        let xLeft = 13;
+        let y = 10;
+        let halaman = 1;
+        let halamanbaru = true;
+        doc.setFontSize(8);
+    
+        // Awal Dokumen BAST PBP
+        const imageUrlKiri = `${process.env.PUBLIC_URL}/assets/img/logos/bulog.png`;
+        const imageUrlKanan = `${process.env.PUBLIC_URL}/assets/img/logos/logosmall.png`;
+    
+        // Untuk memuat gambar, pastikan untuk menggunakan loadImage yang kompatibel dengan jsPDF
+        doc.addImage(imageUrlKiri, 'PNG', 10, 10, 40, 13);
+        doc.addImage(imageUrlKanan, 'PNG', 160, 10, 40, 12);
+    
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+    
+        // Mulai Header
+        doc.setFont('helvetica', 'bold');
+        const title1 = 'BERITA ACARA SERAH TERIMA dsfjhbbsdhjfgsdhfgsadhfjasdgfjh (BAST)';
+        const title2 = 'BANTUAN STUNTING 2024';
+        doc.setLineWidth(1);
+        doc.rect(10, 25, 190, 0);
+        doc.setLineWidth(0.1);
+        doc.text(title1, 105, 16, { align: 'center' });
+        doc.text(title2, 105, 21, { align: 'center' });
+        // Akhir Header
+    
+        // Outputkan PDF sebagai Blob dan tampilkan di iframe
+        const pdfBlob = doc.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+    
+        // Set URL ke iframe untuk preview
+        document.getElementById('pdf-preview').src = pdfUrl;
+    };
+    
+
     return (
         <div>
             {currentView === 'index' && (
@@ -139,6 +180,9 @@ const IndexLOPage = () => {
                                                     <button className="btn btn-link text-danger p-0 ms-3" onClick={() => handleDeleteDataClick(lo.id_lo)}>
                                                         <i className="tf-icons bx bx-message-square-x me-2"></i> DELETE
                                                     </button>
+                                                    <button className="btn btn-link text-success p-0 ms-3" onClick={() => handleCreatePDFClick(lo.id_lo)}>
+                                                        <i className="tf-icons bx bx-download me-2"></i> DOWNLOAD
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -146,6 +190,9 @@ const IndexLOPage = () => {
                                 </div>
                             ))}
                         </div>
+                    </div>
+                    <div className="col-md-12 mb-4 mb-md-0">
+                        <iframe id="pdf-preview" width="100%" height="1200px"></iframe>
                     </div>
                 </div>
             )}

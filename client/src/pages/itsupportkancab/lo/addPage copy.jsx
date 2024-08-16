@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import Select from 'react-select';
 
-const AddPage = ({ currentView, handleBackClick, refreshData }) => {
-
-    const [provinsiOption, setProvinsiOption] = useState([]);
-    const [selectedProvinsi, setSelectedProvinsi] = useState('');
-    const [kabupatenOption, setKabupatenOption] = useState([]);
-    const [selectedKabupaten, setSelectedKabupaten] = useState('');
-    const [kecamatanOption, setKecamatanOption] = useState([]);
-    const [selectedKecamatan, setSelectedKecamatan] = useState('');
-    const [desaOption, setDesaOption] = useState([]);
-    const [selectedDesa, setSelectedDesa] = useState('');
+const AddPage = ({ handlePageChange }) => {
+    const [detailId, setDetailId] = useState('');
     const [alokasiOption, setAlokasiOption] = useState([]);
-    const [selectedAlokasi, setSelectedAlokasi] = useState('');
+    const [selectedAlokasi, setSelectedAlokasi] = useState(null);
+    const [woOption, setWOOption] = useState([]);
+    const [selectedWO, setSelectedWO] = useState(null);
+    const [itemWOOption, setItemWOOption] = useState({ item_wo_by_wo_2408: [] });
+    let nomor = 1;
+    let id = 1;
+
 
     useEffect(() => {
         const fetchAlokasiOptions = async () => {
@@ -33,105 +31,44 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
     }, []);
 
     useEffect(() => {
-        const fetchProvinsiOptions = async () => {
-            try {
-                const response = await axios.get('http://localhost:5050/api/provinsi/all');
-                const options = response.data.map(provinsi => ({
-                    value: provinsi.id_provinsi,
-                    label: provinsi.nama_provinsi
-                }));
-                setProvinsiOption(options);
-            } catch (error) {
-                console.error('Error fetching Provinsi options:', error);
-            }
-        };
-        fetchProvinsiOptions();
-    }, []);
-
-    useEffect(() => {
-        const fetchKabupatenOptions = async (provinsiId) => {
-            try {
-                const response = await axios.get(`http://localhost:5050/api/provinsi/details/${provinsiId}`);
-                const options = response.data.kabupaten_by_provinsi.map(kabupaten => ({
-                    value: kabupaten.id_kabupaten_kota,
-                    label: kabupaten.nama_kabupaten_kota
-                }));
-                setKabupatenOption(options);
-            } catch (error) {
-                console.error('Error fetching Kabupaten options:', error);
-            }
-        };
-
-        if (selectedProvinsi) {
-            fetchKabupatenOptions(selectedProvinsi.value);
-        } else {
-            setKabupatenOption([]);
+        if (detailId !== '') {
+            console.log(detailId);
+            handlePageChange('detail', detailId);
         }
-    }, [selectedProvinsi]);
-
-    useEffect(() => {
-        const fetchKecamatanOptions = async (kabupatenId) => {
-            try {
-                const response = await axios.get(`http://localhost:5050/api/kabupaten/details/${kabupatenId}`);
-                setKecamatanOption(response.data.kecamatan_by_kabupaten);
-            } catch (error) {
-                console.error('Error fetching Kecamatan options:', error);
-            }
-        };
-
-        if (selectedKabupaten) {
-            fetchKecamatanOptions(selectedKabupaten);
-        }
-    }, [selectedKabupaten]);
-
-    useEffect(() => {
-        const fetchDesaOptions = async (kecamatanId) => {
-            try {
-                const response = await axios.get(`http://localhost:5050/api/kecamatan/details/${kecamatanId}`);
-                setDesaOption(response.data.desa_kelurahan_by_kecamatan);
-            } catch (error) {
-                console.error('Error fetching Desa options:', error);
-            }
-        };
-
-        if (selectedKecamatan) {
-            fetchDesaOptions(selectedKecamatan);
-        }
-    }, [selectedKecamatan]);
+    }, [detailId, handlePageChange]);
 
 
     const handleAlokasiChange = (selectedOption) => {
-        console.log(selectedOption);
         setSelectedAlokasi(selectedOption);
+        const fetchWOOptions = async () => {
+            try {
+                const response = await fetch('http://localhost:5050/api/wo2408/all');
+                const data = await response.json();
+                console.log(data);
+                const options = data.map(wo => ({
+                    value: wo.id_wo,
+                    label: `${wo.nomor_wo}`
+                }));
+                setWOOption(options);
+            } catch (error) {
+                console.error('Error fetching WO options:', error);
+            }
+        };
+        fetchWOOptions();
     };
 
-    const handleProvinsiChange = (selectedOption) => {
-        console.log(selectedOption);
-        setSelectedProvinsi(selectedOption);
-        setSelectedKabupaten('');
-        setSelectedKecamatan('');
-        setSelectedDesa('');
-        setDesaOption([]);
-    };
-
-    const handleKabupatenChange = (selectedOption) => {
-        setSelectedKabupaten(selectedOption);
-        setSelectedKecamatan('');
-        setSelectedDesa('');
-        setDesaOption([]);
-    };
-
-    const handleKecamatanChange = (event) => {
-        setSelectedKecamatan(event.target.value);
-        setSelectedDesa('');
-    };
-
-    const handleDesaChange = (event) => {
-        setSelectedDesa(event.target.value);
-    };
-
-    const handleSubmit = () => {
-        console.log("CEK");
+    const handleWOChange = (selectedOption) => {
+        setSelectedWO(selectedOption);
+        const fetchItemWO = async () => {
+            try {
+                const response = await fetch(`http://localhost:5050/api/wo2408/details/${selectedOption.value}`);
+                const data = await response.json();
+                setItemWOOption(data);
+            } catch (error) {
+                console.error('Error fetching WO options:', error);
+            }
+        };
+        fetchItemWO();
     };
 
     const handleChange = (e) => {
@@ -143,9 +80,38 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
     };
 
     const [formData, setFormData] = useState({
-        tanggal_wo: '',
-        nomor_wo: ''
     });
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (selectedWO == null) {
+            console.log("KOSONG");
+        } else {
+            const dataToSubmit = {
+                ...formData,
+                id_wo: selectedWO.value,
+                nomor_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
+                qr_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
+                status_lo: "SEDANG DIBUAT",
+                jenis_muatan: "AYAM",
+            };
+            console.log(dataToSubmit);
+            try {
+                await axios.post('http://localhost:5050/api/lo2408/add', dataToSubmit);
+                console.log('Data submitted successfully');
+                try {
+                    const response = await fetch(`http://localhost:5050/api/lo2408/getlastbyidadminkancabayam/1`, dataToSubmit);
+                    const data = await response.json();
+                    console.log('Data submitted successfully');
+                    setDetailId(data.id_lo);
+                } catch (error) {
+                    console.error('Error submitting data:', error);
+                }
+            } catch (error) {
+                console.error('Error submitting data:', error);
+            }
+        }
+    };
 
     return (
         <div className="row">
@@ -153,26 +119,46 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Tambah Data Working Order (WO)</span>
+                            <span className="menu-header-text fs-6">Tambah Data Loading Order (LO)</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col-lg-12">
                 <div className="">
-                    Klik <button className="fw-bold btn btn-link p-0" onClick={handleBackClick}>disini</button> untuk kembali ke menu utama Working Order (WO).
+                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('index')}>disini</button> untuk kembali ke menu utama Loading Order (LO).
                 </div>
             </div>
             <div className="col-md-12 mt-3">
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="tanggal_wo" className="form-label">Tanggal Working Order (WO)</label>
-                            <input className="form-control text-uppercase" type="date" id="tanggal_wo" name='tanggal_wo' placeholder="Tanggal WO" onChange={handleChange} required />
+                            <label htmlFor="tanggal_lo" className="form-label">Tanggal Loading Order (LO)</label>
+                            <input className="form-control text-uppercase" type="date" id="tanggal_lo" name='tanggal_lo' placeholder="Tanggal WO" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_wo" className="form-label">Nomor Working Order (WO)</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_wo" name='nomor_wo' placeholder="Nomor Working Order" onChange={handleChange} required />
+                            <label htmlFor="nomor_mobil" className="form-label">Nopol Mobil</label>
+                            <input className="form-control text-uppercase" type="text" id="nomor_mobil" name='nomor_mobil' placeholder="Nopol Mobil" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nama_driver" className="form-label">Nama Driver</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Nama Driver" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nomor_driver" className="form-label">Nomor Telpon Driver</label>
+                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Driver" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nama_supplier" className="form-label">Nama Supplier</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_supplier" name='nama_supplier' placeholder="NAMA SUPPLIER" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="alamat_supplier" className="form-label">Alamat Supplier</label>
+                            <input className="form-control text-uppercase" type="text" id="alamat_supplier" name='alamat_supplier' placeholder="ALAMAT SUPPLIER" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="nomor_supplier" className="form-label">Nomor Telpon Supplier</label>
+                            <input className="form-control text-uppercase" type="text" id="nomor_supplier" name='nomor_supplier' placeholder="NOMR TELPON SUPPLIER" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="id_alokasi" className="form-label">Alokasi</label>
@@ -183,48 +169,51 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
                                 onChange={handleAlokasiChange}
                                 options={alokasiOption}
                                 isClearable
-                                placeholder="Pilih Alokasi"
+                                placeholder="PILIH ALOKASI"
                             />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_provinsi" className="form-label">Provinsi</label>
+                            <label htmlFor="id_wo" className="form-label">Nomor WO</label>
                             <Select
-                                id="id_provinsi"
-                                name="id_provinsi"
-                                value={selectedProvinsi}
-                                onChange={handleProvinsiChange}
-                                options={provinsiOption}
-                                isClearable
-                                placeholder="Pilih Provinsi"
+                                id="id_wo"
+                                name="id_wo"
+                                value={selectedWO}
+                                onChange={handleWOChange}
+                                options={woOption}
+                                placeholder="PILIH NOMOR WO"
                             />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_kabupaten" className="form-label">Kabupaten</label>
-                            <Select
-                                id="id_kabupaten"
-                                name="id_kabupaten"
-                                value={selectedKabupaten}
-                                onChange={handleKabupatenChange}
-                                options={kabupatenOption}
-                                isClearable
-                                placeholder="Pilih Kabupaten/Kota"
-                            />
+                        <div className="col-md-12">
+                            <label htmlFor="catatan" className="form-label text-primary">Table Dibawah Ini Hanya Merupakan Desa/Kelurahan serta jumlah alokasi yang ada pada Working Order (WO). Bukan merupakan isi dari Loading Order (LO)</label>
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_kecamatan" className="form-label">Kecamatan</label>
-                            <select className="form-control" id="id_kecamatan" name="id_kecamatan" value={selectedKecamatan} onChange={handleKecamatanChange} required>
-                                <option value="">Pilih Kecamatan</option>
-                                {kecamatanOption.map((kecamatan) => (
-                                    <option key={kecamatan.id_kecamatan} value={kecamatan.id_kecamatan}>{kecamatan.nama_kecamatan}</option>
-                                ))}
-                            </select>
+                        <div className="col-md-12 mb-4 mb-md-0 mt-3">
+                            <div className='table-responsive text-nowrap"'>
+                                <table className="table" style={{ fontSize: "13px" }} >
+                                    <thead>
+                                        <tr>
+                                            <th style={{ width: "5px" }} >No</th>
+                                            <th>Kabupaten/Kota</th>
+                                            <th>Kecamatan</th>
+                                            <th>Desa/Kelurahan</th>
+                                            <th>PAKET</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {itemWOOption.item_wo_by_wo_2408.map((itemWo, index) => (
+                                            <tr key={itemWo.id_item_wo}>
+                                                <td>{nomor++}</td>
+                                                <td>{itemWo.desa_kelurahan.kecamatan.kabupaten_kota.nama_kabupaten_kota}</td>
+                                                <td>{itemWo.desa_kelurahan.kecamatan.nama_kecamatan}</td>
+                                                <td>{itemWo.desa_kelurahan.nama_desa_kelurahan}</td>
+                                                <td>{itemWo.jumlah_paket_desa_kelurahan}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_wo" className="form-label">Nomor Working Order (WO)</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_wo" name='nomor_wo' placeholder="Nomor Working Order" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mt-2">
-                            <button type="submit" className="btn btn-primary w-100">Simpan</button>
+                        <div className="col-md-12 col-sm-12 mt-2">
+                            <button type="submit" className="btn btn-primary w-100">SIMPAN</button>
                         </div>
                     </div>
                 </form>
@@ -234,9 +223,7 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
 };
 
 AddPage.propTypes = {
-    currentView: PropTypes.string.isRequired,
-    handleBackClick: PropTypes.func.isRequired,
-    refreshData: PropTypes.func.isRequired
+    handlePageChange: PropTypes.func.isRequired,
 };
 
 export default AddPage;

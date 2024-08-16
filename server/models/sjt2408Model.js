@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Lo = require('./lo2408Model');
-const Desa = require('./desa2408Model');
+const ItemWO = require('./itemWo2408Model');
 
 const SJT2408 = sequelize.define('sjt_2408', {
     id_sjt: {
@@ -17,12 +17,12 @@ const SJT2408 = sequelize.define('sjt_2408', {
             key: 'id_lo'
         }
     },
-    id_desa_kelurahan: {
+    id_item_wo: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Desa,
-            key: 'id_desa_kelurahan'
+            model: ItemWO,
+            key: 'id_item_wo'
         }
     },
     nomor_sjt: {
@@ -30,19 +30,20 @@ const SJT2408 = sequelize.define('sjt_2408', {
         allowNull: false,
     },
     tanggal_sjt: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
+        defaultValue: DataTypes.NOW
     },
     titik_bagi: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    jam_penerimaan: {
+    waktu_bagi: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     qr_sjt: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     createdAt: {
@@ -54,11 +55,21 @@ const SJT2408 = sequelize.define('sjt_2408', {
         defaultValue: DataTypes.NOW
     }
 }, {
-    timestamps: false,
+    timestamps: true,
+    hooks: {
+        beforeCreate: (WO2408) => {
+            WO2408.titik_bagi = WO2408.titik_bagi.toUpperCase();
+            WO2408.waktu_bagi = WO2408.waktu_bagi.toUpperCase();
+        },
+        beforeUpdate: (WO2408) => {
+            WO2408.titik_bagi = WO2408.titik_bagi.toUpperCase();
+            WO2408.waktu_bagi = WO2408.waktu_bagi.toUpperCase();
+        },
+    },
     tableName: 'sjt_2408',
 });
 
-SJT2408.belongsTo(Desa, { foreignKey: 'id_desa_kelurahan', as: 'desa_kelurahan' });
+SJT2408.belongsTo(ItemWO, { foreignKey: 'id_item_wo', as: 'id_item_wo_sjt' });
 SJT2408.belongsTo(Lo, { foreignKey: 'id_lo', as: 'lo' });
 
 module.exports = SJT2408;

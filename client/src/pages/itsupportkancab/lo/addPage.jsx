@@ -149,16 +149,16 @@ const AddPage = ({ handlePageChange }) => {
                             <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Driver" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_supplier" className="form-label">Nama Supplier</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_supplier" name='nama_supplier' placeholder="NAMA SUPPLIER" onChange={handleChange} required />
+                            <label htmlFor="nama_langsir" className="form-label">Nama Langsir</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Nama Langsir" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="alamat_supplier" className="form-label">Alamat Supplier</label>
-                            <input className="form-control text-uppercase" type="text" id="alamat_supplier" name='alamat_supplier' placeholder="ALAMAT SUPPLIER" onChange={handleChange} required />
+                            <label htmlFor="alamat_langsir" className="form-label">Alamat Langsir</label>
+                            <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Alamat Langsir" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_supplier" className="form-label">Nomor Telpon Supplier</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_supplier" name='nomor_supplier' placeholder="NOMR TELPON SUPPLIER" onChange={handleChange} required />
+                            <label htmlFor="nama_pic" className="form-label">Nama PIC</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_pic" name='nama_pic' placeholder="Nama PIC" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="id_alokasi" className="form-label">Alokasi</label>

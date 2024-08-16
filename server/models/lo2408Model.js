@@ -41,15 +41,15 @@ const LO = sequelize.define('lo_2408', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    nama_supplier: {
+    nama_langsir: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    alamat_supplier: {
+    alamat_langsir: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    nomor_supplier: {
+    nama_pic: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -78,12 +78,18 @@ const LO = sequelize.define('lo_2408', {
             lo_2408.nomor_mobil = lo_2408.nomor_mobil.toUpperCase();
             lo_2408.nama_driver = lo_2408.nama_driver.toUpperCase();
             lo_2408.nomor_driver = lo_2408.nomor_driver.toUpperCase();
+            lo_2408.nama_langsir = lo_2408.nama_langsir.toUpperCase();
+            lo_2408.alamat_langsir = lo_2408.alamat_langsir.toUpperCase();
+            lo_2408.nama_pic = lo_2408.nama_pic.toUpperCase();
         },
         beforeUpdate: (lo_2408) => {
             lo_2408.nomor_lo = lo_2408.nomor_lo.toUpperCase();
             lo_2408.nomor_mobil = lo_2408.nomor_mobil.toUpperCase();
             lo_2408.nama_driver = lo_2408.nama_driver.toUpperCase();
             lo_2408.nomor_driver = lo_2408.nomor_driver.toUpperCase();
+            lo_2408.nama_langsir = lo_2408.nama_langsir.toUpperCase();
+            lo_2408.alamat_langsir = lo_2408.alamat_langsir.toUpperCase();
+            lo_2408.nama_pic = lo_2408.nama_pic.toUpperCase();
         }
     }
 });

@@ -1,3 +1,5 @@
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../config/database");
 const ItemWo = require('../models/itemWo2408Model');
 const Wo = require('../models/wo2408Model');
 const Desa = require('../models/desa2408Model');
@@ -54,6 +56,31 @@ const getAllItemWo = async (req, res) => {
     }
 };
 
+const updateItemWo = async (req, res) => {
+    const { id } = req.params;
+    const {
+        jumlah_paket_desa_kelurahan,
+        jumlah_paket_desa_kelurahan_disalurkan
+    } = req.body;
+
+    const query = `
+        UPDATE itemwo_2408
+        SET jumlah_paket_desa_kelurahan = :jumlah_paket_desa_kelurahan, jumlah_paket_desa_kelurahan_disalurkan = :jumlah_paket_desa_kelurahan_disalurkan
+        WHERE id_item_wo = :id
+    `;
+
+    const result = await sequelize.query(query, {
+        replacements: { id, jumlah_paket_desa_kelurahan, jumlah_paket_desa_kelurahan_disalurkan },
+        type: sequelize.QueryTypes.UPDATE
+    });
+
+    if (result[0] === 0) {
+        return res.status(404).json({ message: 'Desa/Kelurahan not found' });
+    }
+
+    res.status(200).json({ message: 'Jumlah alokasi desa sisa updated successfully' });
+};
+
 const deleteItemWo = async (req, res) => {
     const { id } = req.params;
     try {
@@ -73,5 +100,6 @@ const deleteItemWo = async (req, res) => {
 module.exports = {
     addItemWo,
     getAllItemWo,
+    updateItemWo,
     deleteItemWo
 };

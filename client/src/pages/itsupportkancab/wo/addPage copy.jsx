@@ -5,16 +5,10 @@ import Select from 'react-select';
 
 const AddPage = ({ currentView, handleBackClick, refreshData }) => {
 
-    const [provinsiOption, setProvinsiOption] = useState([]);
-    const [selectedProvinsi, setSelectedProvinsi] = useState('');
-    const [kabupatenOption, setKabupatenOption] = useState([]);
-    const [selectedKabupaten, setSelectedKabupaten] = useState('');
-    const [kecamatanOption, setKecamatanOption] = useState([]);
-    const [selectedKecamatan, setSelectedKecamatan] = useState('');
-    const [desaOption, setDesaOption] = useState([]);
-    const [selectedDesa, setSelectedDesa] = useState('');
     const [alokasiOption, setAlokasiOption] = useState([]);
-    const [selectedAlokasi, setSelectedAlokasi] = useState('');
+    const [selectedAlokasi, setSelectedAlokasi] = useState(null);
+    const [gudangOption, setGudangOption] = useState([]);
+    const [selectedGudang, setSelectedGudang] = useState(null);
 
     useEffect(() => {
         const fetchAlokasiOptions = async () => {
@@ -33,105 +27,27 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
     }, []);
 
     useEffect(() => {
-        const fetchProvinsiOptions = async () => {
+        const fetchGudangOptions = async () => {
             try {
-                const response = await axios.get('http://localhost:5050/api/provinsi/all');
-                const options = response.data.map(provinsi => ({
-                    value: provinsi.id_provinsi,
-                    label: provinsi.nama_provinsi
+                const response = await axios.get('http://localhost:5050/api/gudang/all');
+                const options = response.data.map(gudang => ({
+                    value: gudang.id_gudang,
+                    label: `${gudang.nama_gudang}`
                 }));
-                setProvinsiOption(options);
+                setGudangOption(options);
             } catch (error) {
-                console.error('Error fetching Provinsi options:', error);
+                console.error('Error fetching Gudang options:', error);
             }
         };
-        fetchProvinsiOptions();
+        fetchGudangOptions();
     }, []);
 
-    useEffect(() => {
-        const fetchKabupatenOptions = async (provinsiId) => {
-            try {
-                const response = await axios.get(`http://localhost:5050/api/provinsi/details/${provinsiId}`);
-                const options = response.data.kabupaten_by_provinsi.map(kabupaten => ({
-                    value: kabupaten.id_kabupaten_kota,
-                    label: kabupaten.nama_kabupaten_kota
-                }));
-                setKabupatenOption(options);
-            } catch (error) {
-                console.error('Error fetching Kabupaten options:', error);
-            }
-        };
-
-        if (selectedProvinsi) {
-            fetchKabupatenOptions(selectedProvinsi.value);
-        } else {
-            setKabupatenOption([]);
-        }
-    }, [selectedProvinsi]);
-
-    useEffect(() => {
-        const fetchKecamatanOptions = async (kabupatenId) => {
-            try {
-                const response = await axios.get(`http://localhost:5050/api/kabupaten/details/${kabupatenId}`);
-                setKecamatanOption(response.data.kecamatan_by_kabupaten);
-            } catch (error) {
-                console.error('Error fetching Kecamatan options:', error);
-            }
-        };
-
-        if (selectedKabupaten) {
-            fetchKecamatanOptions(selectedKabupaten);
-        }
-    }, [selectedKabupaten]);
-
-    useEffect(() => {
-        const fetchDesaOptions = async (kecamatanId) => {
-            try {
-                const response = await axios.get(`http://localhost:5050/api/kecamatan/details/${kecamatanId}`);
-                setDesaOption(response.data.desa_kelurahan_by_kecamatan);
-            } catch (error) {
-                console.error('Error fetching Desa options:', error);
-            }
-        };
-
-        if (selectedKecamatan) {
-            fetchDesaOptions(selectedKecamatan);
-        }
-    }, [selectedKecamatan]);
-
-
     const handleAlokasiChange = (selectedOption) => {
-        console.log(selectedOption);
         setSelectedAlokasi(selectedOption);
     };
 
-    const handleProvinsiChange = (selectedOption) => {
-        console.log(selectedOption);
-        setSelectedProvinsi(selectedOption);
-        setSelectedKabupaten('');
-        setSelectedKecamatan('');
-        setSelectedDesa('');
-        setDesaOption([]);
-    };
-
-    const handleKabupatenChange = (selectedOption) => {
-        setSelectedKabupaten(selectedOption);
-        setSelectedKecamatan('');
-        setSelectedDesa('');
-        setDesaOption([]);
-    };
-
-    const handleKecamatanChange = (event) => {
-        setSelectedKecamatan(event.target.value);
-        setSelectedDesa('');
-    };
-
-    const handleDesaChange = (event) => {
-        setSelectedDesa(event.target.value);
-    };
-
-    const handleSubmit = () => {
-        console.log("CEK");
+    const handleGudangChange = (selectedOption) => {
+        setSelectedGudang(selectedOption);
     };
 
     const handleChange = (e) => {
@@ -146,6 +62,25 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
         tanggal_wo: '',
         nomor_wo: ''
     });
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const dataToSubmit = {
+            ...formData,
+            id_admin_kancab: 1,
+            qr_wo: formData.nomor_wo.replace(/[ ,./]/g, ''),
+            status_wo: "BELUM TERSALURKAN",
+            id_alokasi: selectedAlokasi ? selectedAlokasi.value : null,
+            id_gudang: selectedGudang ? selectedGudang.value : null
+        };
+        console.log(dataToSubmit);
+        try {
+            await axios.post('http://localhost:5050/api/wo2408/add', dataToSubmit);
+            console.log('Data submitted successfully');
+        } catch (error) {
+            console.error('Error submitting data:', error);
+        }
+    };
 
     return (
         <div className="row">
@@ -186,44 +121,19 @@ const AddPage = ({ currentView, handleBackClick, refreshData }) => {
                                 placeholder="Pilih Alokasi"
                             />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_provinsi" className="form-label">Provinsi</label>
+                        <div className="col-md-4 col-sm-12 mb-3 d-none">
+                            <label htmlFor="id_gudang" className="form-label">Gudang</label>
                             <Select
-                                id="id_provinsi"
-                                name="id_provinsi"
-                                value={selectedProvinsi}
-                                onChange={handleProvinsiChange}
-                                options={provinsiOption}
+                                id="id_gudang"
+                                name="id_gudang"
+                                value={selectedGudang}
+                                onChange={handleGudangChange}
+                                options={gudangOption}
                                 isClearable
-                                placeholder="Pilih Provinsi"
+                                placeholder="Pilih Gudang"
                             />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_kabupaten" className="form-label">Kabupaten</label>
-                            <Select
-                                id="id_kabupaten"
-                                name="id_kabupaten"
-                                value={selectedKabupaten}
-                                onChange={handleKabupatenChange}
-                                options={kabupatenOption}
-                                isClearable
-                                placeholder="Pilih Kabupaten/Kota"
-                            />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_kecamatan" className="form-label">Kecamatan</label>
-                            <select className="form-control" id="id_kecamatan" name="id_kecamatan" value={selectedKecamatan} onChange={handleKecamatanChange} required>
-                                <option value="">Pilih Kecamatan</option>
-                                {kecamatanOption.map((kecamatan) => (
-                                    <option key={kecamatan.id_kecamatan} value={kecamatan.id_kecamatan}>{kecamatan.nama_kecamatan}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_wo" className="form-label">Nomor Working Order (WO)</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_wo" name='nomor_wo' placeholder="Nomor Working Order" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mt-2">
+                        <div className="col-md-12 col-sm-12 mt-2">
                             <button type="submit" className="btn btn-primary w-100">Simpan</button>
                         </div>
                     </div>

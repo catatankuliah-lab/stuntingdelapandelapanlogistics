@@ -9,6 +9,24 @@
         }]
     },
     {
+        "header": "Vendor dan Armada",
+        "items": [{
+                "text": "Penyedia Armada",
+                "icon": "bx bx-buildings",
+                "available": true,
+                "link": "/itsupportkancab/vendor",
+                "roles": ["itsupportkancab"]
+            },
+            {
+                "text": "Armada",
+                "icon": "bx bx-car",
+                "available": true,
+                "link": "/itsupportkancab/armada",
+                "roles": ["itsupportkancab"]
+            }
+        ]
+    },
+    {
         "header": "DOKUMEN",
         "items": [{
                 "text": "WO",

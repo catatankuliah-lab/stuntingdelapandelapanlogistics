@@ -94,7 +94,7 @@ const IndexLOPage = () => {
                     </div>
                     <div className="col-lg-12">
                         <div className="">
-                            Klik <button className="fw-bold btn btn-link p-0" onClick={handleAdd}>disini</button> untuk menambahkan data Penyedia Armada.
+                            Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('detail', '1', '1')}>disini</button> untuk menambahkan data Penyedia Armada.
                         </div>
                     </div>
                     <div className="col-lg-12 mt-3">

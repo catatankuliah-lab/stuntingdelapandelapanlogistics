@@ -119,14 +119,14 @@ const AddPage = ({ handlePageChange }) => {
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Tambah Penyedia Armada</span>
+                            <span className="menu-header-text fs-6">Tambah Armada</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col-lg-12">
                 <div className="">
-                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('index')}>disini</button> untuk kembali ke menu utama Penyedia Armada.
+                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('index')}>disini</button> untuk kembali ke menu utama Armada.
                 </div>
             </div>
             <div className="col-md-12 mt-3">
@@ -134,23 +134,37 @@ const AddPage = ({ handlePageChange }) => {
                     <div className="row">
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="tanggal_lo" className="form-label">Nama Penyedia Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="tanggal_lo" name='tanggal_lo' placeholder="Nama Penyedia Armada" onChange={handleChange} required />
+                            <Select
+                                id="id_wo"
+                                name="id_wo"
+                                // value={selectedWO}
+                                // onChange={handleWOChange}
+                                // options={woOption}
+                                placeholder="PILIH NAMA PENYEDIA"
+                            />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_mobil" className="form-label">Alamat Penyedia Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_mobil" name='nomor_mobil' placeholder="Alamat Penyedia Armada" onChange={handleChange} required />
+                            <label htmlFor="nomor_mobil" className="form-label">jenis Mobil</label>
+                            <Select
+                                id="id_wo"
+                                name="id_wo"
+                                // value={selectedWO}
+                                // onChange={handleWOChange}
+                                // options={woOption}
+                                placeholder="PILIH JENIS MOBIL"
+                            />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_driver" className="form-label">Penanggung Jawab</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Penanggung Jawab" onChange={handleChange} required />
+                            <label htmlFor="nama_driver" className="form-label">Nopol Mobil</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Nopol Mobil" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_driver" className="form-label">Nomor Telpon Penyedia Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Penyedia Armada" onChange={handleChange} required />
+                            <label htmlFor="nomor_driver" className="form-label">Nama Driver</label>
+                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nama Driver" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_langsir" className="form-label">Jumlah Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Jumlah Armada" onChange={handleChange} required />
+                            <label htmlFor="nama_langsir" className="form-label">Nomor Telepon Driver</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Nomor Telepon Driver" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="alamat_langsir" className="form-label">Status</label>

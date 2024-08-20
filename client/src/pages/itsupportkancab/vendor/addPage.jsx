@@ -119,100 +119,44 @@ const AddPage = ({ handlePageChange }) => {
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Tambah Data Loading Order (LO)</span>
+                            <span className="menu-header-text fs-6">Tambah Penyedia Armada</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col-lg-12">
                 <div className="">
-                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('index')}>disini</button> untuk kembali ke menu utama Loading Order (LO).
+                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('index')}>disini</button> untuk kembali ke menu utama Penyedia Armada.
                 </div>
             </div>
             <div className="col-md-12 mt-3">
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="tanggal_lo" className="form-label">Tanggal Loading Order (LO)</label>
-                            <input className="form-control text-uppercase" type="date" id="tanggal_lo" name='tanggal_lo' placeholder="Tanggal WO" onChange={handleChange} required />
+                            <label htmlFor="tanggal_lo" className="form-label">Nama Penyedia Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="tanggal_lo" name='tanggal_lo' placeholder="Nama Penyedia Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_mobil" className="form-label">Nopol Mobil</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_mobil" name='nomor_mobil' placeholder="Nopol Mobil" onChange={handleChange} required />
+                            <label htmlFor="nomor_mobil" className="form-label">Alamat Penyedia Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="nomor_mobil" name='nomor_mobil' placeholder="Alamat Penyedia Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_driver" className="form-label">Nama Driver</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Nama Driver" onChange={handleChange} required />
+                            <label htmlFor="nama_driver" className="form-label">Penanggung Jawab</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Penanggung Jawab" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_driver" className="form-label">Nomor Telpon Driver</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Driver" onChange={handleChange} required />
+                            <label htmlFor="nomor_driver" className="form-label">Nomor Telpon Penyedia Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Penyedia Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_langsir" className="form-label">Nama Langsir</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Nama Langsir" onChange={handleChange} required />
+                            <label htmlFor="nama_langsir" className="form-label">Jumlah Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Jumlah Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="alamat_langsir" className="form-label">Alamat Langsir</label>
-                            <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Alamat Langsir" onChange={handleChange} required />
+                            <label htmlFor="alamat_langsir" className="form-label">Status</label>
+                            <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Tersedia" onChange={handleChange} required />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_pic" className="form-label">Nama PIC</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_pic" name='nama_pic' placeholder="Nama PIC" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_alokasi" className="form-label">Alokasi</label>
-                            <Select
-                                id="id_alokasi"
-                                name="id_alokasi"
-                                value={selectedAlokasi}
-                                onChange={handleAlokasiChange}
-                                options={alokasiOption}
-                                isClearable
-                                placeholder="PILIH ALOKASI"
-                            />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="id_wo" className="form-label">Nomor WO</label>
-                            <Select
-                                id="id_wo"
-                                name="id_wo"
-                                value={selectedWO}
-                                onChange={handleWOChange}
-                                options={woOption}
-                                placeholder="PILIH NOMOR WO"
-                            />
-                        </div>
-                        <div className="col-md-12">
-                            <label htmlFor="catatan" className="form-label text-primary">Table Dibawah Ini Hanya Merupakan Desa/Kelurahan serta jumlah alokasi yang ada pada Working Order (WO). Bukan merupakan isi dari Loading Order (LO)</label>
-                        </div>
-                        <div className="col-md-12 mb-4 mb-md-0 mt-3">
-                            <div className='table-responsive text-nowrap"'>
-                                <table className="table" style={{ fontSize: "13px" }} >
-                                    <thead>
-                                        <tr>
-                                            <th style={{ width: "5px" }} >No</th>
-                                            <th>Kabupaten/Kota</th>
-                                            <th>Kecamatan</th>
-                                            <th>Desa/Kelurahan</th>
-                                            <th>PAKET</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {itemWOOption.item_wo_by_wo_2408.map((itemWo, index) => (
-                                            <tr key={itemWo.id_item_wo}>
-                                                <td>{nomor++}</td>
-                                                <td>{itemWo.desa_kelurahan.kecamatan.kabupaten_kota.nama_kabupaten_kota}</td>
-                                                <td>{itemWo.desa_kelurahan.kecamatan.nama_kecamatan}</td>
-                                                <td>{itemWo.desa_kelurahan.nama_desa_kelurahan}</td>
-                                                <td>{itemWo.jumlah_paket_desa_kelurahan}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div className="col-md-12 col-sm-12 mt-2">
+                        <div className="col-md-4 col-sm-12 mb-3 mt-4">
                             <button type="submit" className="btn btn-primary w-100">SIMPAN</button>
                         </div>
                     </div>

@@ -5,6 +5,7 @@ import IndexWOPageITSKancab from '../pages/itsupportkancab/wo/indexPage';
 import IndexLOPageITSKancab from '../pages/itsupportkancab/lo/indexPage';
 import IndexVendorPageITSKancab from '../pages/itsupportkancab/vendor/indexPage';
 import IndexArmadaPageITSKancab from '../pages/itsupportkancab/armada/indexPage';
+import IndexPOPageITSKancab from '../pages/itsupportkancab/po/indexPage';
 
 const AppRoutes = () => {
     return (
@@ -12,6 +13,7 @@ const AppRoutes = () => {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/itsupportkancab/vendor" element={<IndexVendorPageITSKancab />} />
             <Route path="/itsupportkancab/armada" element={<IndexArmadaPageITSKancab />} />
+            <Route path="/itsupportkancab/po" element={<IndexPOPageITSKancab />} />
             <Route path="/itsupportkancab/lo" element={<IndexLOPageITSKancab />} />
             <Route path="/itsupportkancab/wo" element={<IndexWOPageITSKancab />} />
         </Routes>

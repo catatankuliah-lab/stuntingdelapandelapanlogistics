@@ -27,6 +27,16 @@
         ]
     },
     {
+        "header": "PO",
+        "items": [{
+            "text": "PO",
+            "icon": "bx bx-folder",
+            "available": true,
+            "link": "/itsupportkancab/po",
+            "roles": ["itsupportkancab"]
+        }]
+    },
+    {
         "header": "DOKUMEN",
         "items": [{
                 "text": "WO",

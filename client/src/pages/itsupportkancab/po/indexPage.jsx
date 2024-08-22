@@ -87,14 +87,14 @@ const IndexLOPage = () => {
                         <div className="mb-3">
                             <div className="divider text-start">
                                 <div className="divider-text">
-                                    <span className="menu-header-text fs-6 fw-bold">Data Penyedia Armada</span>
+                                    <span className="menu-header-text fs-6 fw-bold">Data Purchase Order (PO)</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="col-lg-12">
                         <div className="">
-                            Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('detail', '1', '1')}>disini</button> untuk menambahkan data Penyedia Armada.
+                            Klik <button className="fw-bold btn btn-link p-0" onClick={() => handlePageChange('add', '1', '1')}>disini</button> untuk menambahkan data Purchase Order (PO).
                         </div>
                     </div>
                     <div className="col-lg-12 mt-3">

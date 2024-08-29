@@ -438,9 +438,6 @@ const IndexLOPage = () => {
                             ))}
                         </div>
                     </div>
-                    {/* <div className="col-md-12 mb-4 mb-md-0">
-                        <iframe id="pdf-preview" width="100%" height="1200px"></iframe>
-                    </div> */}
                 </div>
             )}
             {currentView === 'add' && <AddPage handlePageChange={handlePageChange} />}

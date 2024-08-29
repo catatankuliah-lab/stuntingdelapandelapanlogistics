@@ -2,32 +2,46 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Select from 'react-select';
+import Swal from 'sweetalert2';
 
-const AddPage = ({ handlePageChange }) => {
+const AddPage = ({ handlePageChange, handleBackClick }) => {
     const [detailId, setDetailId] = useState('');
-    const [alokasiOption, setAlokasiOption] = useState([]);
-    const [selectedAlokasi, setSelectedAlokasi] = useState(null);
-    const [woOption, setWOOption] = useState([]);
-    const [selectedWO, setSelectedWO] = useState(null);
-    const [itemWOOption, setItemWOOption] = useState({ item_wo_by_wo_2408: [] });
-    let nomor = 1;
-    let id = 1;
-
-
+    const [vendorArmada, setVendorArmada] = useState([]);
+    const [selectedVendor, setSelectedVendor] = useState(null);
+    const [jenisMobil, setJenisMobil] = useState([]);
+    const [selectedJenisMobil, setSelectedJenisMobil] = useState(null);
+    const [formData, setFormData] = useState({
+    });
     useEffect(() => {
-        const fetchAlokasiOptions = async () => {
+        const fetchVendorArmadaAll = async () => {
             try {
-                const response = await axios.get('http://localhost:5050/api/alokasi/all');
-                const options = response.data.map(alokasi => ({
-                    value: alokasi.id_alokasi,
-                    label: `${alokasi.bulan_alokasi} ${alokasi.tahun_alokasi}`
+                const response = await axios.get('http://localhost:5050/api/vendorarmada/all');
+                const datavendorarmada = response.data.map(vendorarmadaall => ({
+                    value: vendorarmadaall.id_vendor,
+                    label: vendorarmadaall.nama_vendor
                 }));
-                setAlokasiOption(options);
+                setVendorArmada(datavendorarmada);
             } catch (error) {
-                console.error('Error fetching Alokasi options:', error);
+                console.error('Error fetching', error);
             }
         };
-        fetchAlokasiOptions();
+        fetchVendorArmadaAll();
+    }, []);
+
+    useEffect(() => {
+        const fetchJenisMobil = async () => {
+            try {
+                const response = await axios.get('http://localhost:5050/api/jenismobil/all');
+                const datajenismobil = response.data.map(jenismobil => ({
+                    value: jenismobil.id_jenis_mobil,
+                    label: jenismobil.nama_jenis_mobil
+                }));
+                setJenisMobil(datajenismobil);
+            } catch (error) {
+                console.error('Error fetching', error);
+            }
+        };
+        fetchJenisMobil();
     }, []);
 
     useEffect(() => {
@@ -37,38 +51,12 @@ const AddPage = ({ handlePageChange }) => {
         }
     }, [detailId, handlePageChange]);
 
-
-    const handleAlokasiChange = (selectedOption) => {
-        setSelectedAlokasi(selectedOption);
-        const fetchWOOptions = async () => {
-            try {
-                const response = await fetch('http://localhost:5050/api/wo2408/all');
-                const data = await response.json();
-                console.log(data);
-                const options = data.map(wo => ({
-                    value: wo.id_wo,
-                    label: `${wo.nomor_wo}`
-                }));
-                setWOOption(options);
-            } catch (error) {
-                console.error('Error fetching WO options:', error);
-            }
-        };
-        fetchWOOptions();
+    const handleVendorArmadaChange = (selectedOption) => {
+        setSelectedVendor(selectedOption);
     };
 
-    const handleWOChange = (selectedOption) => {
-        setSelectedWO(selectedOption);
-        const fetchItemWO = async () => {
-            try {
-                const response = await fetch(`http://localhost:5050/api/wo2408/details/${selectedOption.value}`);
-                const data = await response.json();
-                setItemWOOption(data);
-            } catch (error) {
-                console.error('Error fetching WO options:', error);
-            }
-        };
-        fetchItemWO();
+    const handleJenisMobilChange = (selectedOption) => {
+        setSelectedJenisMobil(selectedOption);
     };
 
     const handleChange = (e) => {
@@ -79,37 +67,34 @@ const AddPage = ({ handlePageChange }) => {
         });
     };
 
-    const [formData, setFormData] = useState({
-    });
-
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (selectedWO == null) {
-            console.log("KOSONG");
-        } else {
-            const dataToSubmit = {
-                ...formData,
-                id_wo: selectedWO.value,
-                nomor_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
-                qr_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
-                status_lo: "SEDANG DIBUAT",
-                jenis_muatan: "AYAM",
-            };
-            console.log(dataToSubmit);
-            try {
-                await axios.post('http://localhost:5050/api/lo2408/add', dataToSubmit);
-                console.log('Data submitted successfully');
-                try {
-                    const response = await fetch(`http://localhost:5050/api/lo2408/getlastbyidadminkancabayam/1`, dataToSubmit);
-                    const data = await response.json();
-                    console.log('Data submitted successfully');
-                    setDetailId(data.id_lo);
-                } catch (error) {
-                    console.error('Error submitting data:', error);
-                }
-            } catch (error) {
-                console.error('Error submitting data:', error);
+        const dataToSubmit = {
+            ...formData,
+            status_armada: "TERSEDIA",
+            id_vendor: selectedVendor.value,
+            id_jenis_mobil: selectedJenisMobil.value,
+            lokasi_terakhir: "GARASI " + selectedVendor.label,
+        };
+        try {
+            const response = await axios.post('http://localhost:5050/api/armada/add', dataToSubmit);
+            const dataToUpdate = {
+                status_vendor: "TERSEDIA"
             }
+            await axios.put(`http://localhost:5050/api/vendorarmada/updatestatus/${response.data.id_vendor}`, dataToUpdate);
+            Swal.fire({
+                title: 'Data Armada',
+                text: 'Data Berhasil Ditambahkan',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000,
+                position: 'center',
+                timerProgressBar: true
+            }).then(() => {
+                handleBackClick();
+            });
+        } catch (error) {
+            console.error('Error submitting data:', error);
         }
     };
 
@@ -132,45 +117,38 @@ const AddPage = ({ handlePageChange }) => {
             <div className="col-md-12 mt-3">
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="tanggal_lo" className="form-label">Nama Penyedia Armada</label>
+                        <div className="col-md-4 col-sm-12 col-sm-6 mb-3">
+                            <label htmlFor="id_vendor" className="form-label">VENDOR ARMADA</label>
                             <Select
-                                id="id_wo"
-                                name="id_wo"
-                                // value={selectedWO}
-                                // onChange={handleWOChange}
-                                // options={woOption}
-                                placeholder="PILIH NAMA PENYEDIA"
+                                id="id_vendor"
+                                name="id_vendor"
+                                value={selectedVendor}
+                                onChange={handleVendorArmadaChange}
+                                options={vendorArmada}
+                                placeholder="PILIH VENDOR"
                             />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_mobil" className="form-label">jenis Mobil</label>
+                        <div className="col-md-4 col-sm-12 col-sm-6 mb-3">
+                            <label htmlFor="id_jenis_mobil" className="form-label">JENIS MOBIL</label>
                             <Select
-                                id="id_wo"
-                                name="id_wo"
-                                // value={selectedWO}
-                                // onChange={handleWOChange}
-                                // options={woOption}
+                                id="id_jenis_mobil"
+                                name="id_jenis_mobil"
+                                value={selectedJenisMobil}
+                                onChange={handleJenisMobilChange}
+                                options={jenisMobil}
                                 placeholder="PILIH JENIS MOBIL"
                             />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_driver" className="form-label">Nopol Mobil</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Nopol Mobil" onChange={handleChange} required />
+                            <label htmlFor="nopol_mobil_armada" className="form-label">Nopol Mobil</label>
+                            <input className="form-control text-uppercase" type="text" id="nopol_mobil_armada" name='nopol_mobil_armada' placeholder="Nopol Mobil" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_driver" className="form-label">Nama Driver</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nama Driver" onChange={handleChange} required />
+                            <label htmlFor="status_armada" className="form-label">Status</label>
+                            <input className="form-control text-uppercase" type="text" id="status_armada" name='status_armada' placeholder="Tersedia" readOnly />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_langsir" className="form-label">Nomor Telepon Driver</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Nomor Telepon Driver" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="alamat_langsir" className="form-label">Status</label>
-                            <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Tersedia" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-4 col-sm-12 mb-3 mt-4">
+                            <label htmlFor="" className="form-label">Proses</label>
                             <button type="submit" className="btn btn-primary w-100">SIMPAN</button>
                         </div>
                     </div>
@@ -182,6 +160,7 @@ const AddPage = ({ handlePageChange }) => {
 
 AddPage.propTypes = {
     handlePageChange: PropTypes.func.isRequired,
+    handleBackClick: PropTypes.func.isRequired,
 };
 
 export default AddPage;

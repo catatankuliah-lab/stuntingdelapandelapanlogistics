@@ -1,76 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import Select from 'react-select';
+import Swal from 'sweetalert2';
 
-const AddPage = ({ handlePageChange }) => {
-    const [detailId, setDetailId] = useState('');
-    const [alokasiOption, setAlokasiOption] = useState([]);
-    const [selectedAlokasi, setSelectedAlokasi] = useState(null);
-    const [woOption, setWOOption] = useState([]);
-    const [selectedWO, setSelectedWO] = useState(null);
-    const [itemWOOption, setItemWOOption] = useState({ item_wo_by_wo_2408: [] });
-    let nomor = 1;
-    let id = 1;
-
-
-    useEffect(() => {
-        const fetchAlokasiOptions = async () => {
-            try {
-                const response = await axios.get('http://localhost:5050/api/alokasi/all');
-                const options = response.data.map(alokasi => ({
-                    value: alokasi.id_alokasi,
-                    label: `${alokasi.bulan_alokasi} ${alokasi.tahun_alokasi}`
-                }));
-                setAlokasiOption(options);
-            } catch (error) {
-                console.error('Error fetching Alokasi options:', error);
-            }
-        };
-        fetchAlokasiOptions();
-    }, []);
-
-    useEffect(() => {
-        if (detailId !== '') {
-            console.log(detailId);
-            handlePageChange('detail', detailId);
-        }
-    }, [detailId, handlePageChange]);
-
-
-    const handleAlokasiChange = (selectedOption) => {
-        setSelectedAlokasi(selectedOption);
-        const fetchWOOptions = async () => {
-            try {
-                const response = await fetch('http://localhost:5050/api/wo2408/all');
-                const data = await response.json();
-                console.log(data);
-                const options = data.map(wo => ({
-                    value: wo.id_wo,
-                    label: `${wo.nomor_wo}`
-                }));
-                setWOOption(options);
-            } catch (error) {
-                console.error('Error fetching WO options:', error);
-            }
-        };
-        fetchWOOptions();
-    };
-
-    const handleWOChange = (selectedOption) => {
-        setSelectedWO(selectedOption);
-        const fetchItemWO = async () => {
-            try {
-                const response = await fetch(`http://localhost:5050/api/wo2408/details/${selectedOption.value}`);
-                const data = await response.json();
-                setItemWOOption(data);
-            } catch (error) {
-                console.error('Error fetching WO options:', error);
-            }
-        };
-        fetchItemWO();
-    };
-
+const AddPage = ({ handlePageChange, handleBackClick }) => {
+    const [formData, setFormData] = useState({
+    });
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -78,38 +13,28 @@ const AddPage = ({ handlePageChange }) => {
             [name]: value
         });
     };
-
-    const [formData, setFormData] = useState({
-    });
-
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (selectedWO == null) {
-            console.log("KOSONG");
-        } else {
-            const dataToSubmit = {
-                ...formData,
-                id_wo: selectedWO.value,
-                nomor_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
-                qr_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
-                status_lo: "SEDANG DIBUAT",
-                jenis_muatan: "AYAM",
-            };
-            console.log(dataToSubmit);
-            try {
-                await axios.post('http://localhost:5050/api/lo2408/add', dataToSubmit);
-                console.log('Data submitted successfully');
-                try {
-                    const response = await fetch(`http://localhost:5050/api/lo2408/getlastbyidadminkancabayam/1`, dataToSubmit);
-                    const data = await response.json();
-                    console.log('Data submitted successfully');
-                    setDetailId(data.id_lo);
-                } catch (error) {
-                    console.error('Error submitting data:', error);
-                }
-            } catch (error) {
-                console.error('Error submitting data:', error);
-            }
+        const dataToSubmit = {
+            ...formData,
+            status_vendor: "TIDAK TERSEDIA",
+            jumlah_armada: "0",
+        };
+        try {
+            await axios.post('http://localhost:5050/api/vendorarmada/add', dataToSubmit);
+            Swal.fire({
+                title: 'Data Penyedia Armada',
+                text: 'Data Berhasil Ditambahkan',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000,
+                position: 'center',
+                timerProgressBar: true
+            }).then(() => {
+                handleBackClick();
+            });
+        } catch (error) {
+            console.error('Error submitting data:', error);
         }
     };
 
@@ -133,30 +58,31 @@ const AddPage = ({ handlePageChange }) => {
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="tanggal_lo" className="form-label">Nama Penyedia Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="tanggal_lo" name='tanggal_lo' placeholder="Nama Penyedia Armada" onChange={handleChange} required />
+                            <label htmlFor="nama_vendor" className="form-label">Nama Penyedia Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="nama_vendor" name='nama_vendor' placeholder="Nama Penyedia Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_mobil" className="form-label">Alamat Penyedia Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_mobil" name='nomor_mobil' placeholder="Alamat Penyedia Armada" onChange={handleChange} required />
+                            <label htmlFor="alamat_vendor" className="form-label">Alamat Penyedia Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="alamat_vendor" name='alamat_vendor' placeholder="Alamat Penyedia Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_driver" className="form-label">Penanggung Jawab</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Penanggung Jawab" onChange={handleChange} required />
+                            <label htmlFor="penanggungjawab_vendor" className="form-label">Penanggung Jawab</label>
+                            <input className="form-control text-uppercase" type="text" id="penanggungjawab_vendor" name='penanggungjawab_vendor' placeholder="Penanggung Jawab" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nomor_driver" className="form-label">Nomor Telpon Penyedia Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Penyedia Armada" onChange={handleChange} required />
+                            <label htmlFor="telpon_vendor" className="form-label">Nomor Telpon Penyedia Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="telpon_vendor" name='telpon_vendor' placeholder="Nomor Telpon Penyedia Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
-                            <label htmlFor="nama_langsir" className="form-label">Jumlah Armada</label>
-                            <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Jumlah Armada" onChange={handleChange} required />
+                            <label htmlFor="jumlah_armada" className="form-label">Jumlah Armada</label>
+                            <input className="form-control text-uppercase" type="text" id="jumlah_armada" name='jumlah_armada' placeholder="Jumlah Armada" readOnly />
                         </div>
                         <div className="col-md-4 col-sm-12 mb-3">
                             <label htmlFor="alamat_langsir" className="form-label">Status</label>
-                            <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Tersedia" onChange={handleChange} required />
+                            <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Tersedia" readOnly />
                         </div>
-                        <div className="col-md-4 col-sm-12 mb-3 mt-4">
+                        <div className="col-md-4 col-sm-12 mb-3">
+                            <label htmlFor="" className="form-label">Proses</label>
                             <button type="submit" className="btn btn-primary w-100">SIMPAN</button>
                         </div>
                     </div>
@@ -168,6 +94,7 @@ const AddPage = ({ handlePageChange }) => {
 
 AddPage.propTypes = {
     handlePageChange: PropTypes.func.isRequired,
+    handleBackClick: PropTypes.func.isRequired,
 };
 
 export default AddPage;

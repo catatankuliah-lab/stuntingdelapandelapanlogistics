@@ -1,11 +1,53 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Swal from 'sweetalert2';
 
+const DetailPage = ({ handlePageChange, detailId, handleBackClick }) => {
+    const inputRef = useRef(null);
+    const [vendorArmada, setVendorArmada] = useState([]);
+    const [listArmada, setListArmada] = useState([]);
+    const [formData, setFormData] = useState({
+        nama_vendor: vendorArmada?.nama_vendor || "",
+        alamat_vendor: vendorArmada?.alamat_vendor || "",
+        penanggungjawab_vendor: vendorArmada?.penanggungjawab_vendor || "",
+        telpon_vendor: vendorArmada?.telpon_vendor || "",
+    });
 
-const DetailPage = ({ handlePageChange, detailId, idAlokasiPenyaluran }) => {
-    
+    useEffect(() => {
+        setFormData({
+            nama_vendor: vendorArmada?.nama_vendor || "",
+            alamat_vendor: vendorArmada?.alamat_vendor || "",
+            penanggungjawab_vendor: vendorArmada?.penanggungjawab_vendor || "",
+            telpon_vendor: vendorArmada?.telpon_vendor || "",
+        });
+    }, [vendorArmada]);
+
+    const fetchVendorArmada = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:5050/api/vendorarmada/detail/${detailId}`);
+            console.clear();
+            setVendorArmada(response.data.result)
+            const bahanArmada = response.data.result.armada_by_id_vendor.map((armada, index) => ({
+                no: index + 1,
+                id_armada: armada.id_armada,
+                id_vendor: armada.id_vendor,
+                id_jenis_mobil: armada.id_jenis_mobil,
+                nopol_mobil_armada: armada.nopol_mobil_armada,
+                telpon_driver_armada: armada.telpon_driver_armada,
+                status_armada: armada.status_armada,
+                lokasi_terakhir: armada.lokasi_terakhir
+            }));
+            setListArmada(bahanArmada);
+        } catch (error) {
+            console.error('Error fetching Alokasi options:', error);
+        }
+    }, [detailId]);
+
+    useEffect(() => {
+        fetchVendorArmada();
+    }, [fetchVendorArmada]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -14,38 +56,24 @@ const DetailPage = ({ handlePageChange, detailId, idAlokasiPenyaluran }) => {
         });
     };
 
-    const [formData, setFormData] = useState({
-    });
-
     const handleSubmit = async (event) => {
-        // event.preventDefault();
-        // if (selectedWO == null) {
-        //     console.log("KOSONG");
-        // } else {
-        //     const dataToSubmit = {
-        //         ...formData,
-        //         id_wo: selectedWO.value,
-        //         nomor_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
-        //         qr_lo: 'LO-88LOGSTNG-A1-' + selectedAlokasi.value + '24-1',
-        //         status_lo: "SEDANG DIBUAT",
-        //         jenis_muatan: "AYAM",
-        //     };
-        //     console.log(dataToSubmit);
-        //     try {
-        //         await axios.post('http://localhost:5050/api/lo2408/add', dataToSubmit);
-        //         console.log('Data submitted successfully');
-        //         try {
-        //             const response = await fetch(`http://localhost:5050/api/lo2408/getlastbyidadminkancabayam/1`, dataToSubmit);
-        //             const data = await response.json();
-        //             console.log('Data submitted successfully');
-        //             setDetailId(data.id_lo);
-        //         } catch (error) {
-        //             console.error('Error submitting data:', error);
-        //         }
-        //     } catch (error) {
-        //         console.error('Error submitting data:', error);
-        //     }
-        // }
+        event.preventDefault();
+        try {
+            await axios.put(`http://localhost:5050/api/vendorarmada/update/${detailId}`, formData);
+            Swal.fire({
+                title: 'Data Penyedia Armada',
+                text: 'Data Berhasil Diperbaharui',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000,
+                position: 'center',
+                timerProgressBar: true
+            }).then(() => {
+                handleBackClick();
+            });
+        } catch (error) {
+            console.error('Error submitting data:', error);
+        }
     };
     return (
         <div className="row">
@@ -64,69 +92,65 @@ const DetailPage = ({ handlePageChange, detailId, idAlokasiPenyaluran }) => {
                 </div>
             </div>
             <div className="col-md-12 mt-3">
-                <form id="form">
-                    <div className="row">
-                        <div className="col-md-12 mt-3">
-                            <form id="form" onSubmit={handleSubmit}>
-                                <div className="row">
-                                    <div className="col-md-4 col-sm-12 mb-3">
-                                        <label htmlFor="tanggal_lo" className="form-label">Nama Penyedia Armada</label>
-                                        <input className="form-control text-uppercase" type="text" id="tanggal_lo" name='tanggal_lo' placeholder="Nama Penyedia Armada" onChange={handleChange} required />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-3">
-                                        <label htmlFor="nomor_mobil" className="form-label">Alamat Penyedia Armada</label>
-                                        <input className="form-control text-uppercase" type="text" id="nomor_mobil" name='nomor_mobil' placeholder="Alamat Penyedia Armada" onChange={handleChange} required />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-3">
-                                        <label htmlFor="nama_driver" className="form-label">Penanggung Jawab</label>
-                                        <input className="form-control text-uppercase" type="text" id="nama_driver" name='nama_driver' placeholder="Penanggung Jawab" onChange={handleChange} required />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-3">
-                                        <label htmlFor="nomor_driver" className="form-label">Nomor Telpon Penyedia Armada</label>
-                                        <input className="form-control text-uppercase" type="text" id="nomor_driver" name='nomor_driver' placeholder="Nomor Telpon Penyedia Armada" onChange={handleChange} required />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-3">
-                                        <label htmlFor="nama_langsir" className="form-label">Jumlah Armada</label>
-                                        <input className="form-control text-uppercase" type="text" id="nama_langsir" name='nama_langsir' placeholder="Jumlah Armada" onChange={handleChange} required />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-3">
-                                        <label htmlFor="alamat_langsir" className="form-label">Status</label>
-                                        <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Tersedia" onChange={handleChange} required />
-                                    </div>
-                                    <div className="col-md-4 col-sm-12 mb-3 mt-4">
-                                        <button type="submit" className="btn btn-primary w-100">SIMPAN PERUBAHAN</button>
-                                    </div>
-                                    <div className="col-md-12 mb-4 mb-md-0 mt-3">
-                                        <div className='table-responsive text-nowrap"'>
-                                            <table className="table" style={{ fontSize: "13px" }} >
-                                                <thead>
-                                                    <tr>
-                                                        <th style={{ width: "5px" }} >No</th>
-                                                        <th>Nopol Mobil</th>
-                                                        <th>Nama Driver</th>
-                                                        <th>Nomor Telepon</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {/* {itemWOOption.item_wo_by_wo_2408.map((itemWo, index) => (
-                                                        <tr key={itemWo.id_item_wo}>
-                                                            <td>{nomor++}</td>
-                                                            <td>{itemWo.desa_kelurahan.kecamatan.kabupaten_kota.nama_kabupaten_kota}</td>
-                                                            <td>{itemWo.desa_kelurahan.kecamatan.nama_kecamatan}</td>
-                                                            <td>{itemWo.desa_kelurahan.nama_desa_kelurahan}</td>
-                                                            <td>{itemWo.jumlah_paket_desa_kelurahan}</td>
-                                                        </tr>
-                                                    ))} */}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                <div className="col-md-12 mt-3">
+                    <form id="form" onSubmit={handleSubmit}>
+                        <div className="row">
+                            <div className="col-md-4 col-sm-12 mb-3">
+                                <label htmlFor="nama_vendor" className="form-label">Nama Penyedia Armada</label>
+                                <input className="form-control text-uppercase" type="text" id="nama_vendor" name='nama_vendor' placeholder="Nama Penyedia Armada" ref={inputRef} defaultValue={vendorArmada?.nama_vendor || ""} onChange={handleChange} required />
+                            </div>
+                            <div className="col-md-4 col-sm-12 mb-3">
+                                <label htmlFor="alamat_vendor" className="form-label">Alamat Penyedia Armada</label>
+                                <input className="form-control text-uppercase" type="text" id="alamat_vendor" name='alamat_vendor' placeholder="Alamat Penyedia Armada" ref={inputRef} defaultValue={vendorArmada?.alamat_vendor || ""} onChange={handleChange} required />
+                            </div>
+                            <div className="col-md-4 col-sm-12 mb-3">
+                                <label htmlFor="penanggungjawab_vendor" className="form-label">Penanggung Jawab</label>
+                                <input className="form-control text-uppercase" type="text" id="penanggungjawab_vendor" name='penanggungjawab_vendor' placeholder="Penanggung Jawab" ref={inputRef} defaultValue={vendorArmada?.penanggungjawab_vendor || ""} onChange={handleChange} required />
+                            </div>
+                            <div className="col-md-4 col-sm-12 mb-3">
+                                <label htmlFor="telpon_vendor" className="form-label">Nomor Telpon Penyedia Armada</label>
+                                <input className="form-control text-uppercase" type="text" id="telpon_vendor" name='telpon_vendor' placeholder="Nomor Telpon Penyedia Armada" ref={inputRef} defaultValue={vendorArmada?.telpon_vendor || ""} onChange={handleChange} required />
+                            </div>
+                            <div className="col-md-4 col-sm-12 mb-3">
+                                <label htmlFor="jumlah_armada" className="form-label">Jumlah Armada</label>
+                                <input className="form-control text-uppercase" type="text" id="jumlah_armada" name='jumlah_armada' placeholder="Jumlah Armada" value={vendorArmada.jumlah_armada} readOnly />
+                            </div>
+                            <div className="col-md-4 col-sm-12 mb-3">
+                                <label htmlFor="alamat_langsir" className="form-label">Status</label>
+                                <input className="form-control text-uppercase" type="text" id="alamat_langsir" name='alamat_langsir' placeholder="Tersedia" value={vendorArmada.status_vendor} readOnly />
+                            </div>
+                            <div className="col-md-4 col-sm-12 mb-3 mt-4">
+                                <button type="submit" className="btn btn-primary w-100">SIMPAN PERUBAHAN</button>
+                            </div>
+                            <div className="col-md-12 mb-4 mb-md-0 mt-3">
+                                <div className='table-responsive text-nowrap"'>
+                                    <table className="table" style={{ fontSize: "13px" }} >
+                                        <thead>
+                                            <tr>
+                                                <th style={{ width: "5px" }} >No</th>
+                                                <th>Nopol Mobil</th>
+                                                <th>Nomor Telepon</th>
+                                                <th>Lokasi Terakhir</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {listArmada.map((itemArmada, index) => (
+                                                <tr key={itemArmada.id_armada}>
+                                                    <td>{itemArmada.no}</td>
+                                                    <td>{itemArmada.nopol_mobil_armada}</td>
+                                                    <td>{itemArmada.telpon_driver_armada}</td>
+                                                    <td>{itemArmada.lokasi_terakhir}</td>
+                                                    <td>{itemArmada.status_armada}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     );
@@ -135,7 +159,7 @@ const DetailPage = ({ handlePageChange, detailId, idAlokasiPenyaluran }) => {
 DetailPage.propTypes = {
     handlePageChange: PropTypes.func.isRequired,
     detailId: PropTypes.number.isRequired,
-    idAlokasiPenyaluran: PropTypes.object.isRequired
+    handleBackClick: PropTypes.func.isRequired,
 };
 
 export default DetailPage;

@@ -30,7 +30,7 @@ const vendorArmada = sequelize.define('vendorArmada', {
     },
     status_vendor: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
     createdAt: {
         type: DataTypes.DATE,

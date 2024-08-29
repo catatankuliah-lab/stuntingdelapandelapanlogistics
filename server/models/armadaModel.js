@@ -29,14 +29,6 @@ const armada = sequelize.define('armada', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    nama_driver_armada: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    telpon_driver_armada: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     status_armada: {
         type: DataTypes.STRING,
         allowNull: true,

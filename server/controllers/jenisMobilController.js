@@ -4,11 +4,16 @@ const JenisMobil = require('../models/jenisMobilModel');
 
 const getAllJenisMobil = async (req, res) => {
     try {
-        const dataJenisMobil = await JenisMobil.findAll();
-        res.status(200).send(dataJenisMobil);
+        const query = `
+            SELECT * FROM jenis_mobil WHERE id_jenis_mobil
+        `;
+        const results = await sequelize.query(query, {
+            type: sequelize.QueryTypes.SELECT
+        });
+        res.status(200).json(results.length ? results : []);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error Vendor Armada', error);
+        res.status(500).send('Belum Ada Jenis Mobil');
     }
 };
 
